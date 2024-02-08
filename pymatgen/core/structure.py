@@ -3336,7 +3336,7 @@ class IMolecule(SiteCollection, MSONable):
         return dct
 
     @classmethod
-    def from_dict(cls, dct) -> IMolecule | Molecule:
+    def from_dict(cls, dct: dict) -> IMolecule | Molecule:
         """Reconstitute a Molecule object from a dict representation created using `as_dict`.
 
         Args:
@@ -3367,11 +3367,11 @@ class IMolecule(SiteCollection, MSONable):
         """Find all sites within a sphere from a point.
 
         Args:
-            pt (3x1 array): Cartesian coordinates of center of sphere
-            r (float): Radius of sphere.
+            pt (3x1 ArrayLike): Cartesian coordinates of the center of the sphere.
+            r (float): Radius of the sphere.
 
         Returns:
-            Neighbor
+            A list of `Neighbor`s.
         """
         neighbors = []
         for idx, site in enumerate(self._sites):
@@ -3381,15 +3381,15 @@ class IMolecule(SiteCollection, MSONable):
         return neighbors
 
     def get_neighbors(self, site: Site, r: float) -> list[Neighbor]:
-        """Get all neighbors to a site within a sphere of radius r. Excludes the
-        site itself.
+        """Get all neighbors to a `Site` within a sphere of radius r. Excludes the
+        `site` itself.
 
         Args:
-            site (Site): Site at the center of the sphere.
+            site (Site): Site being considered. Sphere is centered on it.
             r (float): Radius of sphere.
 
         Returns:
-            Neighbor
+            A list of `Neighbor`s
         """
         nns = self.get_sites_in_sphere(site.coords, r)
         return [nn for nn in nns if nn != site]
@@ -3399,7 +3399,7 @@ class IMolecule(SiteCollection, MSONable):
         r-dr and r+dr.
 
         Args:
-            origin (3x1 array): Cartesian coordinates of center of sphere.
+            origin (3x1 ArrayLike): Cartesian coordinates of the site being considered. The shell is centered on it.
             r (float): Inner radius of shell.
             dr (float): Width of shell.
 
