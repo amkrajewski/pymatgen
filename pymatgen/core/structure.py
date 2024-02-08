@@ -3025,30 +3025,30 @@ class IMolecule(SiteCollection, MSONable):
         """Create a Molecule.
 
         Args:
-            species: list of atomic species. Possible kinds of input include a
-                list of dict of elements/species and occupancies, a List of
+            species: List of atomic species. Possible kinds of input include a
+                List of dicts of elements/species and occupancies, a List of
                 elements/specie specified as actual Element/Species, Strings
                 ("Fe", "Fe2+") or atomic numbers (1,56).
-            coords (3x1 array): list of Cartesian coordinates of each species.
+            coords (3x1 array): List of Cartesian coordinates of each specie.
             charge (float): Charge for the molecule. Defaults to 0.
-            spin_multiplicity (int): Spin multiplicity for molecule.
+            spin_multiplicity (int): Spin multiplicity for the molecule.
                 Defaults to None, which means that the spin multiplicity is
-                set to 1 if the molecule has no unpaired electrons and to 2
-                if there are unpaired electrons.
+                automatically set to 1 if the molecule has no unpaired
+                electrons and to 2 if there are unpaired electrons.
             validate_proximity (bool): Whether to check if there are sites
                 that are less than 1 Ang apart. Defaults to False.
             site_properties (dict): Properties associated with the sites as
                 a dict of sequences, e.g., {"magmom":[5,5,5,5]}. The
-                sequences have to be the same length as the atomic species
-                and fractional_coords. Defaults to None for no properties.
+                sequences have to be the same length as the atomic `species`
+                and `fractional_coords`. Defaults to None for no properties.
             labels (list[str]): Labels associated with the sites as a
                 list of strings, e.g. ['Li1', 'Li2']. Must have the same
-                length as the species and fractional coords. Defaults to
+                length as the `species` and `fractional_coords`. Defaults to
                 None for no labels.
             charge_spin_check (bool): Whether to check that the charge and
                 spin multiplicity are compatible with each other. Defaults
                 to True.
-            properties (dict): dictionary containing properties associated
+            properties (dict): Dictionary containing properties associated
                 with the whole molecule.
         """
         if len(species) != len(coords):
@@ -3086,12 +3086,12 @@ class IMolecule(SiteCollection, MSONable):
 
     @property
     def charge(self) -> float:
-        """Charge of molecule."""
+        """Charge of the molecule."""
         return self._charge
 
     @property
     def spin_multiplicity(self) -> float:
-        """Spin multiplicity of molecule."""
+        """Spin multiplicity of the molecule."""
         return self._spin_multiplicity
 
     @property
@@ -3107,7 +3107,7 @@ class IMolecule(SiteCollection, MSONable):
 
     @property
     def center_of_mass(self) -> np.ndarray:
-        """Center of mass of molecule."""
+        """Molecule's center of mass."""
         center = np.zeros(3)
         total_weight: float = 0
         for site in self:
@@ -3120,7 +3120,7 @@ class IMolecule(SiteCollection, MSONable):
         """Convenience method to get a copy of the molecule.
 
         Returns:
-            IMolecule | Molecule
+            `IMolecule` or `Molecule`
         """
         return type(self).from_sites(self, properties=self.properties)
 
@@ -3138,7 +3138,7 @@ class IMolecule(SiteCollection, MSONable):
 
         Args:
             sites ([Site]): Sequence of Sites.
-            charge (int): Charge of molecule. Defaults to 0.
+            charge (int): Charge of the molecule. Defaults to 0.
             spin_multiplicity (int): Spin multicipity. Defaults to None,
                 in which it is determined automatically.
             validate_proximity (bool): Whether to check that atoms are too
