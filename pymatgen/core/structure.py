@@ -3397,13 +3397,13 @@ class IMolecule(SiteCollection, MSONable):
         return [nn for nn in nns if nn != site]
 
     def get_neighbors_in_shell(self, origin: ArrayLike, r: float, dr: float) -> list[Neighbor]:
-        """Returns all sites in a shell centered on origin (coords) between radii
+        """Returns all sites in a shell centered around coordinates of `origin` between radii
         r-dr and r+dr.
 
         Args:
             origin (3x1 ArrayLike): Cartesian coordinates of the site being considered. The shell is centered on it.
-            r (float): Inner radius of shell.
-            dr (float): Width of shell.
+            r (float): Radius of a sphere inside the shell, from which sites within `dr` are included in it.
+            dr (float): Half-thickness of the shell.
 
         Returns:
             Neighbor
