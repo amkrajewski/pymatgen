@@ -3406,7 +3406,7 @@ class IMolecule(SiteCollection, MSONable):
             dr (float): Half-thickness of the shell.
 
         Returns:
-            Neighbor
+            A list of `Neighbor`s
         """
         outer = self.get_sites_in_sphere(origin, r + dr)
         inner = r - dr
@@ -3425,15 +3425,15 @@ class IMolecule(SiteCollection, MSONable):
         no_cross: bool = False,
         reorder: bool = True,
     ) -> IStructure | Structure:
-        """Creates a Structure from a Molecule by putting the Molecule in the
-        center of a orthorhombic box. Useful for creating Structure for
+        """Create a Structure from a Molecule by putting the Molecule in the
+        center of an orthorhombic box. Useful for creating Structure for
         calculating molecules using periodic codes.
 
         Args:
             a (float): a-lattice parameter.
             b (float): b-lattice parameter.
             c (float): c-lattice parameter.
-            images: No. of boxed images in each direction. Defaults to
+            images (ArrayLike): No. of boxed images in each direction. Defaults to
                 (1, 1, 1), meaning single molecule with 1 lattice parameter
                 in each direction.
             random_rotation (bool): Whether to apply a random rotation to
@@ -3443,13 +3443,13 @@ class IMolecule(SiteCollection, MSONable):
                 each other. This is only used if random_rotation is True.
                 The randomized rotations are searched such that no two atoms
                 are less than min_dist from each other.
-            cls: The Structure class to instantiate (defaults to pymatgen
-                structure)
-            offset: Translation to offset molecule from center of mass coords
-            no_cross: Whether to forbid molecule coords from extending beyond
-                boundary of box.
-            reorder: Whether to reorder the sites to be in electronegativity
-                order.
+            cls: The Structure class to instantiate. Defaults to `Structure` if the default
+                None is not overridden.
+            offset: Translation to offset molecule from the center of mass coordinates.
+            no_cross: Whether to forbid molecule coordinates from extending beyond
+                the boundaries of the box.
+            reorder (bool): Whether to reorder the sites to be in electronegativity
+                order. Defaults to True.
 
         Returns:
             Structure containing molecule in a box.
@@ -3533,10 +3533,10 @@ class IMolecule(SiteCollection, MSONable):
         )
 
     def get_centered_molecule(self) -> IMolecule | Molecule:
-        """Returns a Molecule centered at the center of mass.
+        """Returns a Molecule offset such that the center of mass is at the origin.
 
         Returns:
-            Molecule centered with center of mass at origin.
+            `Molecule` with the center of mass at origin.
         """
         center = self.center_of_mass
         new_coords = np.array(self.cart_coords) - center
@@ -3557,16 +3557,16 @@ class IMolecule(SiteCollection, MSONable):
         Args:
             filename (str): If provided, output will be written to a file. If
                 fmt is not specified, the format is determined from the
-                filename. Defaults is None, i.e. string output.
-            fmt (str): Format to output to. Defaults to JSON unless filename
-                is provided. If fmt is specifies, it overrides whatever the
+                filename. Defaults to None, i.e. string output type.
+            fmt (str): Format to output to. Defaults to JSON unless a filename
+                is provided. If fmt is specified, it overrides whatever the
                 filename is. Options include "xyz", "gjf", "g03", "json". If
                 you have OpenBabel installed, any of the formats supported by
-                OpenBabel. Non-case sensitive.
+                OpenBabel. Not case-sensitive.
 
         Returns:
-            str: String representation of molecule in given format. If a filename
-                is provided, the same string is written to the file.
+            Either a string representation of molecule in given format or None if a filename is provided,
+            in which case the string is written to the file.
         """
         from pymatgen.io.babel import BabelMolAdaptor
         from pymatgen.io.gaussian import GaussianInput
