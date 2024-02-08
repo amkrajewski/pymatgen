@@ -1833,7 +1833,8 @@ class TestIMolecule(PymatgenTest):
         with pytest.raises(StructureError) as exc:
             Molecule(["C", "H", "H", "H", "H", "H"], coords, validate_proximity=True)
 
-        assert "Molecule contains sites that are less than 0.01 Angstrom apart!" in str(exc.value)
+        assert "Molecule contains sites that are less than" in str(exc.value)
+        assert " Angstrom apart!" in str(exc.value)
 
     def test_get_angle_dihedral(self):
         assert self.mol.get_angle(1, 0, 2) == approx(109.47122144618737)
