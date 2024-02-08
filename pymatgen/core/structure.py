@@ -3551,22 +3551,21 @@ class IMolecule(SiteCollection, MSONable):
             properties=self.properties,
         )
 
-    def to(self, filename: str = "", fmt: str = "") -> str | None:
-        """Outputs the molecule to a file or string.
+    def to(self, filename: str = "", fmt: str = "") -> str:
+        """Outputs the molecule to a string. If a filename is provided,
+        it also writes the string to the file.
 
         Args:
-            filename (str): If provided, output will be written to a file. If
-                fmt is not specified, the format is determined from the
-                filename. Defaults to None, i.e. string output type.
-            fmt (str): Format to output to. Defaults to JSON unless a filename
-                is provided. If fmt is specified, it overrides whatever the
-                filename is. Options include "xyz", "gjf", "g03", "json". If
-                you have OpenBabel installed, any of the formats supported by
-                OpenBabel. Not case-sensitive.
+            filename (str): If provided, output will be written to a file. If fmt is not specified,
+                the format will be determined from the filename. Defaults to an empty string, i.e., not
+                writing to a file.
+            fmt (str): Format to output to. Defaults to an empty string and infers the format from the filename
+                if provided. If fmt is specified, it overrides whatever the filename and prevents persisitng to a file.
+                Options include "xyz", "gjf", "g03", "json". If you have OpenBabel installed, any of the formats
+                supported by OpenBabel. Not case-sensitive.
 
         Returns:
-            Either a string representation of molecule in given format or None if a filename is provided,
-            in which case the string is written to the file.
+            A string representation of molecule in given format inferred from `filename` or directly from `fmt`.
         """
         from pymatgen.io.babel import BabelMolAdaptor
         from pymatgen.io.gaussian import GaussianInput
@@ -3574,6 +3573,10 @@ class IMolecule(SiteCollection, MSONable):
 
         fmt = fmt.lower()
         writer: Any
+        if fmt and filename:
+            warnings.warn(f"Format {fmt} is specified. Ignoring filename {filename} and proceeding.")
+            filename = ""
+
         if fmt == "xyz" or fnmatch(filename.lower(), "*.xyz*"):
             writer = XYZ(self)
         elif any(fmt == ext or fnmatch(filename.lower(), f"*.{ext}*") for ext in ["gjf", "g03", "g09", "com", "inp"]):
