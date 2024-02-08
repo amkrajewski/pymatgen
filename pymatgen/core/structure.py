@@ -3223,7 +3223,7 @@ class IMolecule(SiteCollection, MSONable):
                 CovalentBond.is_bonded.
 
         Returns:
-            List of bonds
+            List of `CovalentBond`s
         """
         bonds = []
         for site1, site2 in itertools.combinations(self._sites, 2):
@@ -3249,8 +3249,12 @@ class IMolecule(SiteCollection, MSONable):
             return False
         return all(site in other for site in self)
 
-    def get_zmatrix(self):
-        """Returns a z-matrix representation of the molecule."""
+    def get_zmatrix(self) -> str:
+        """Returns a z-matrix representation of the molecule.
+
+        Returns:
+            String representation of the z-matrix.
+        """
         # TODO: allow more z-matrix conventions for element/site description
 
         output = []
@@ -3278,8 +3282,16 @@ class IMolecule(SiteCollection, MSONable):
                 output_var.extend((f"B{idx}={bond_length:.6f}", f"A{idx}={angle:.6f}", f"D{idx}={dih:.6f}"))
         return "\n".join(output) + "\n\n" + "\n".join(output_var)
 
-    def _find_nn_pos_before_site(self, site_idx):
-        """Returns index of nearest neighbor atoms."""
+    def _find_nn_pos_before_site(self, site_idx: int) -> list[int]:
+        """Returns indices of neighbor atoms that have a lower index
+        than the site_idx ordered by the distance.
+
+        Args:
+            site_idx (int): Index of the site in the molecule.
+
+        Returns:
+            List of indices of nearest neighbor atoms.
+        """
         all_dist = [(self.get_distance(site_idx, idx), idx) for idx in range(site_idx)]
         all_dist = sorted(all_dist, key=lambda x: x[0])
         return [d[1] for d in all_dist]
@@ -3302,8 +3314,12 @@ class IMolecule(SiteCollection, MSONable):
             outs.append(f"{idx} {site.species_string} {' '.join([f'{coord:0.6f}'.rjust(12) for coord in site.coords])}")
         return "\n".join(outs)
 
-    def as_dict(self):
-        """JSON-serializable dict representation of Molecule."""
+    def as_dict(self) -> dict:
+        """JSON-serializable dict representation of Molecule.
+
+        Returns:
+            Dict which can be JSON serialized or used to recreate the Molecule using `from_dict`.
+        """
         dct = {
             "@module": type(self).__module__,
             "@class": type(self).__name__,
@@ -3321,7 +3337,7 @@ class IMolecule(SiteCollection, MSONable):
 
     @classmethod
     def from_dict(cls, dct) -> IMolecule | Molecule:
-        """Reconstitute a Molecule object from a dict representation created using as_dict().
+        """Reconstitute a Molecule object from a dict representation created using `as_dict`.
 
         Args:
             dct (dict): dict representation of Molecule.
