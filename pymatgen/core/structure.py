@@ -3069,7 +3069,8 @@ class IMolecule(SiteCollection, MSONable):
 
         self._sites = tuple(sites)
         if validate_proximity and not self.is_valid():
-            raise StructureError("Molecule contains sites that are less than 0.01 Angstrom apart!")
+            raise StructureError(
+                f"Molecule contains sites that are less than {self.DISTANCE_TOLERANCE} Angstrom apart!")
 
         self._charge = charge
         n_electrons = self.nelectrons
