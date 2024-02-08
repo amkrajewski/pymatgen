@@ -3036,7 +3036,8 @@ class IMolecule(SiteCollection, MSONable):
                 automatically set to 1 if the molecule has no unpaired
                 electrons and to 2 if there are unpaired electrons.
             validate_proximity (bool): Whether to check if there are sites
-                that are less than 1 Ang apart. Defaults to False.
+                that are less than `self.DISTANCE_TOLERANCE` Angstrom apart,
+                or 0.5 Angstrom by default. Not run (False) by default.
             site_properties (dict): Properties associated with the sites as
                 a dict of sequences, e.g., {"magmom":[5,5,5,5]}. The
                 sequences have to be the same length as the atomic `species`
