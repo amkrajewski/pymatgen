@@ -3373,6 +3373,8 @@ class IMolecule(SiteCollection, MSONable):
         Returns:
             A list of `Neighbor`s.
         """
+
+        assert len(pt) == 3, "pt must be a 3x1 ArrayLike of cartesian coordinates."
         neighbors = []
         for idx, site in enumerate(self._sites):
             dist = site.distance_from_point(pt)
