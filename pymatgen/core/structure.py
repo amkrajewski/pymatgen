@@ -3779,10 +3779,10 @@ class Structure(IStructure, collections.abc.MutableSequence):
         Examples:
             s[0] = "Fe"
             s[0] = Element("Fe")
-            both replaces the species only.
+            both replace the species only.
             s[0] = "Fe", [0.5, 0.5, 0.5]
             Replaces site and *fractional* coordinates. Any properties
-            are inherited from current site.
+            are inherited from the current site.
             s[0] = "Fe", [0.5, 0.5, 0.5], spin=2
             Replaces site and *fractional* coordinates and properties.
 
@@ -3851,16 +3851,19 @@ class Structure(IStructure, collections.abc.MutableSequence):
         coords_are_cartesian: bool = False,
         validate_proximity: bool = False,
         properties: dict | None = None,
-    ):
+    ) -> Structure | IStructure:
         """Append a site to the structure.
 
         Args:
-            species: Species of inserted site
-            coords (3x1 array): Coordinates of inserted site
-            coords_are_cartesian (bool): Whether coordinates are cartesian.
-                Defaults to False.
-            validate_proximity (bool): Whether to check if inserted site is
-                too close to an existing site. Defaults to False.
+            species: Species of inserted site. See definition of Structure for examples of
+                species formats.
+            coords (3x1 ArrayLike): Coordinates of inserted site. By default, these are
+                assumed to be in fractional coordinates, unless ``coords_are_cartesian`` is
+                set to True.
+            coords_are_cartesian (bool): Whether coordinates are Cartesian. Defaults to False.
+            validate_proximity (bool): Whether to check if the appended site is too close to
+                an existing site, i.e., ``self.DISTANCE_TOLERANCE`` Angstrom apart, or
+                0.5 Angstrom by default. Not run (False) by default.
             properties (dict): Properties of the site.
 
         Returns:
@@ -3889,8 +3892,11 @@ class Structure(IStructure, collections.abc.MutableSequence):
 
         Args:
             idx (int): Index to insert site
-            species (species-like): Species of inserted site
-            coords (3x1 array): Coordinates of inserted site
+            species (species-like): Species of the inserted site. See definition of Structure for examples of
+                species formats.
+            coords (3x1 ArrayLike): Coordinates of the inserted site. By default, these are
+                assumed to be in fractional coordinates, unless ``coords_are_cartesian`` is
+                set to True.
             coords_are_cartesian (bool): Whether coordinates are cartesian.
                 Defaults to False.
             validate_proximity (bool): Whether to check if the inserted site is too close to
@@ -3927,14 +3933,16 @@ class Structure(IStructure, collections.abc.MutableSequence):
         occupations.
 
         Args:
-            idx (int): Index of the site in the sites list.
-            species (species-like): Species of replacement site
-            coords (3x1 array): Coordinates of replacement site. If None,
-                the current coordinates are assumed.
-            coords_are_cartesian (bool): Whether coordinates are cartesian.
+            idx (int): Index of the site in the sites list of the structure.
+            species (CompositionLike): Species to replace the site with.
+            coords (3x1 ArrayLike): Coordinates of replacement site with. If None,
+                the site inherits the coordinates of the site being replaced. Defaults
+                to None. By default, these are assumed to be in fractional coordinates,
+                unless ``coords_are_cartesian`` is set to True.
+            coords_are_cartesian (bool): Whether coordinates are Cartesian.
                 Defaults to False.
-            properties (dict): Properties associated with the site.
-            label (str): Label associated with the site.
+            properties (dict): Properties to associate with the site.
+            label (str): Label to associate with the site.
         """
         if coords is None:
             frac_coords = self[idx].frac_coords
@@ -3946,27 +3954,29 @@ class Structure(IStructure, collections.abc.MutableSequence):
         new_site = PeriodicSite(species, frac_coords, self._lattice, properties=properties, label=label)
         self.sites[idx] = new_site
 
-    def substitute(self, index: int, func_group: IMolecule | Molecule | str, bond_order: int = 1) -> None:
+    def substitute(
+            self,
+            index: int,
+            func_group: IMolecule | Molecule | str,
+            bond_order: int = 1
+    ) -> None:
         """Substitute atom at index with a functional group.
 
         Args:
             index (int): Index of atom to substitute.
-            func_group: Substituent molecule. There are two options:
-
-                1. Providing an actual Molecule as the input. The first atom
-                   must be a DummySpecies X, indicating the position of
-                   nearest neighbor. The second atom must be the next
-                   nearest atom. For example, for a methyl group
-                   substitution, func_group should be X-CH3, where X is the
-                   first site and C is the second site. What the code will
-                   do is to remove the index site, and connect the nearest
-                   neighbor to the C atom in CH3. The X-C bond indicates the
-                   directionality to connect the atoms.
-                2. A string name. The molecule will be obtained from the
-                   relevant template in func_groups.json.
-            bond_order (int): A specified bond order to calculate the bond
-                length between the attached functional group and the nearest
-                neighbor site. Defaults to 1.
+            func_group (IMolecule | Molecule | str): Substituent molecule.
+                There are two options:
+                1. Providing an actual ``Molecule`` as the input. The first atom must be
+                   a ``DummySpecies`` X, indicating the position of the nearest neighbor.
+                   The second atom must be the next nearest atom. For example, for a methyl
+                   group substitution, func_group should be X-CH3, where X is the first
+                   site and C is the second site. What the code will do is to remove the
+                   index site, and connect the nearest neighbor to the C atom in CH3. The X-C
+                   bond indicates the directionality to connect the atoms.
+                2. A string name. The molecule will be obtained from the relevant template in
+                   ``func_groups.json``.
+            bond_order (int): A specified bond order to calculate the bond length between the
+                attached functional group and the nearest neighbor site. Defaults to 1.
         """
         # Find the nearest neighbor that is not a terminal atom.
         all_non_terminal_nn = []
@@ -3987,10 +3997,10 @@ class Structure(IStructure, collections.abc.MutableSequence):
         # non-terminal neighbor.
         origin = non_terminal_nn.coords
 
-        # Pass value of functional group--either from user-defined or from
+        # Pass the value of the functional group--either from user-defined or from
         # functional.json
         if not isinstance(func_group, Molecule):
-            # Check to see whether the functional group is in database.
+            # Check to see whether the functional group is in the database.
             if func_group not in FunctionalGroups:
                 raise RuntimeError("Can't find functional group in list. Provide explicit coordinate instead")
             fgroup = FunctionalGroups[func_group]
@@ -4001,7 +4011,7 @@ class Structure(IStructure, collections.abc.MutableSequence):
         # bond length is equal to the bond length.
         try:
             bl = get_bond_length(non_terminal_nn.specie, fgroup[1].specie, bond_order=bond_order)
-        # Catches for case of incompatibility between Element(s) and Species(s)
+        # Catches for the case of incompatibility between Element(s) and Species(s)
         except TypeError:
             bl = None
 
@@ -4015,7 +4025,7 @@ class Structure(IStructure, collections.abc.MutableSequence):
         x = fgroup[0]
         fgroup.translate_sites(list(range(len(fgroup))), origin - x.coords)
 
-        # Find angle between the attaching bond and the bond to be replaced.
+        # Find the angle between the attaching bond and the bond to be replaced.
         v1 = fgroup[1].coords - origin
         v2 = self[index].coords - origin
         angle = get_angle(v1, v2)
@@ -4067,7 +4077,7 @@ class Structure(IStructure, collections.abc.MutableSequence):
         """Delete sites with at indices.
 
         Args:
-            indices: Sequence of indices of sites to delete.
+            indices (Sequence[int | None]): Sequence of the indices of sites to delete.
         """
         self.sites = [site for idx, site in enumerate(self) if idx not in indices]
 
