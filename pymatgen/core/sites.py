@@ -131,25 +131,27 @@ class Site(collections.abc.Hashable, MSONable):
     def z(self, z: float) -> None:
         self.coords[2] = z
 
-    def distance(self, other) -> float:
-        """Get distance between two sites.
+    def distance(self, other: Site) -> float:
+        """Get the distance in units of Angstrom between this site and another
+        site (in the Cartesian coordinates).
 
         Args:
-            other: Other site.
+            other (Site): The other site.
 
         Returns:
-            float: distance
+            float: distance [Angstrom]
         """
         return float(np.linalg.norm(other.coords - self.coords))
 
-    def distance_from_point(self, pt) -> float:
-        """Returns distance between the site and a point in space.
+    def distance_from_point(self, pt: ArrayLike) -> float:
+        """Get the distance in units of Angstrom between this site and a point in
+        the Cartesian coordinates.
 
         Args:
-            pt: Cartesian coordinates of point.
+            pt (ArrayLike): Cartesian coordinates of point.
 
         Returns:
-            float: distance
+            float: distance [Angstrom]
         """
         return float(np.linalg.norm(np.array(pt) - self.coords))
 
