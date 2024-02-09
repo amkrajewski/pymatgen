@@ -3711,12 +3711,12 @@ class Structure(IStructure, collections.abc.MutableSequence):
         """Create a periodic structure.
 
         Args:
-            lattice: The lattice, either as a pymatgen.core.Lattice or
+            lattice (ArrayLike | Lattice): The lattice, either as a pymatgen.core.Lattice or
                 simply as any 2D array. Each row should correspond to a lattice
                 vector. E.g., [[10,0,0], [20,10,0], [0,0,30]] specifies a
                 lattice with lattice vectors [10,0,0], [20,10,0] and [0,0,30].
-            species: List of species on each site. Can take in flexible input,
-                including:
+            species (Sequence[CompositionLike]): List of species on each site. Can take in
+                flexible input,including:
 
                 i.  A sequence of element / species specified either as string
                     symbols, e.g. ["Li", "Fe2+", "P", ...] or atomic numbers,
@@ -3725,28 +3725,26 @@ class Structure(IStructure, collections.abc.MutableSequence):
                 ii. List of dict of elements/species and occupancies, e.g.,
                     [{"Fe" : 0.5, "Mn":0.5}, ...]. This allows the setup of
                     disordered structures.
-            coords (Nx3 array): list of fractional/cartesian coordinates of
-                each species.
-            charge (int): overall charge of the structure. Defaults to behavior
-                in SiteCollection where total charge is the sum of the oxidation
-                states.
-            validate_proximity (bool): Whether to check if there are sites
-                that are less than 0.01 Ang apart. Defaults to False.
-            to_unit_cell (bool): Whether to map all sites into the unit cell,
-                i.e., fractional coords between 0 and 1. Defaults to False.
-            coords_are_cartesian (bool): Set to True if you are providing
-                coordinates in Cartesian coordinates. Defaults to False.
-            site_properties (dict): Properties associated with the sites as a
-                dict of sequences, e.g., {"magmom":[5,5,5,5]}. The sequences
-                have to be the same length as the atomic species and
-                fractional_coords. Defaults to None for no properties.
-            labels (list[str]): Labels associated with the sites as a
-                list of strings, e.g. ['Li1', 'Li2']. Must have the same
-                length as the species and fractional coords. Defaults to
+            coords (Nx3 Sequence[ArrayLike]): List of fractional/cartesian coordinates in 3D
+                of each species.
+            charge (float): The overall charge of the structure. Defaults to behavior in
+                SiteCollection where total charge is the sum of the oxidation states.
+            validate_proximity (bool): Whether to check if there are sites that are less than
+                `self.DISTANCE_TOLERANCE` Angstrom apart, or 0.5 Angstrom by default.
+                Not run (False) by default.
+            to_unit_cell (bool): Whether to map all sites into the unit cell, i.e., fractional
+                coords between 0 and 1. Defaults to False.
+            coords_are_cartesian (bool): Set to True if you are providing coordinates in
+                Cartesian coordinates. Defaults to False.
+            site_properties (dict): Properties associated with the sites as a dict of
+                sequences, e.g., {"magmom":[5,5,5,5]}. The sequences have to be the same length
+                as the `species` and `coords`. Defaults to None for no properties.
+            labels (list[str]): Labels associated with the sites as a list of strings, e.g.
+                ['Li1', 'Li2']. Must have the same length as the `species` and `coords`. Defaults to
                 None for no labels.
-            properties (dict): Properties associated with the whole structure.
-                Will be serialized when writing the structure to JSON or YAML but is
-                lost when converting to other formats.
+            properties (dict): Dictionary of roperties associated with the whole structure. It will
+                be serialized when writing the structure to JSON or YAML but is lost when converting
+                to other formats. Defaults to None for no properties.
         """
         super().__init__(
             lattice,
