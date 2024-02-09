@@ -3644,7 +3644,7 @@ class IMolecule(SiteCollection, MSONable):
         else:
             from pymatgen.io.babel import BabelMolAdaptor
             mol = BabelMolAdaptor.from_str(input_string, file_format=fmt).pymatgen_mol
-            return cls.from_sites(mol, properties=mol.properties)
+        return cls.from_sites(mol, properties=mol.properties)
 
     @classmethod
     def from_file(cls, filename: str | Path, fmt: str = "") -> IMolecule | Molecule:
@@ -3769,10 +3769,9 @@ class Structure(IStructure, collections.abc.MutableSequence):
         """Modify a site in the structure.
 
         Args:
-            idx (int, [int], slice, Species-like): Indices to change. You can
-                specify these as an int, a list of int, or a species-like
-                string.
-            site (PeriodicSite | Species | dict[SpeciesLike, float] | Sequence): 4 options exist. You
+            idx (int | slice | Sequence[int] | SpeciesLike): Indices to change. You can specify these as
+                an int, a list of int, or a species-like string.
+            site (PeriodicSite | SpeciesLike | dict[SpeciesLike, float] | Sequence): 4 options exist. You
                 can provide a PeriodicSite directly (lattice will be checked). Or more conveniently,
                 you can provide a species-like object (or a dict mapping SpeciesLike to occupancy floats)
                 or a tuple of up to length 3.
