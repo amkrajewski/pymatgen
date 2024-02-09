@@ -40,21 +40,24 @@ class Site(collections.abc.Hashable, MSONable):
     ) -> None:
         """Creates a non-periodic Site.
 
-        :param species: Species on the site. Can be:
-            i.  A Composition-type object (preferred)
-            ii. An  element / species specified either as a string
-                symbols, e.g. "Li", "Fe2+", "P" or atomic numbers,
-                e.g., 3, 56, or actual Element or Species objects.
-            iii.Dict of elements/species and occupancies, e.g.,
-                {"Fe" : 0.5, "Mn":0.5}. This allows the setup of
-                disordered structures.
-        :param coords: Cartesian coordinates of site.
-        :param properties: Properties associated with the site as a dict, e.g.
-            {"magmom": 5}. Defaults to None.
-        :param label: Label for the site. Defaults to None.
-        :param skip_checks: Whether to ignore all the usual checks and just
-            create the site. Use this if the Site is created in a controlled
-            manner and speed is desired.
+        Args:
+            species (SpeciesLike | CompositionLike): Species on the site.
+                They can be:
+                i.  A Composition-type object (preferred)
+                ii. An element / species specified either as a string
+                    symbols, e.g. "Li", "Fe2+", "P" or atomic numbers,
+                    e.g., 3, 56, or actual Element or Species objects.
+                iii.Dict of elements/species and occupancies, e.g.,
+                    {"Fe" : 0.5, "Mn":0.5}. This allows the setup of
+                    disordered structures.
+            coords (ArrayLike): Coordinates of site, Cartesian coordinates
+                by default.
+            properties (dict): Properties associated with the site as a dict, e.g.
+                {"magmom": 5}. Defaults to None.
+            label (str): Label for the site. Defaults to None.
+            skip_checks (bool): Whether to ignore all the usual checks and just create
+                the site. Use this if the PeriodicSite is created in a controlled manner
+                and speed is desired.
         """
         if not skip_checks:
             if not isinstance(species, Composition):
@@ -72,7 +75,7 @@ class Site(collections.abc.Hashable, MSONable):
         self._label = label
 
     def __getattr__(self, attr):
-        # overriding getattr doesn't play nicely with pickle, so we can't use self._properties
+        # Qverriding getattr doesn't play nicely with pickle, so we can't use self._properties
         props = self.__getattribute__("properties")
         if attr in props:
             return props[attr]
@@ -80,7 +83,11 @@ class Site(collections.abc.Hashable, MSONable):
 
     @property
     def species(self) -> Composition:
-        """The species on the site as a composition, e.g., Fe0.5Mn0.5."""
+        """The species on the site.
+
+        Returns:
+            Composition: The species on the site, e.g., Fe0.5Mn0.5.
+        """
         return self._species
 
     @species.setter
