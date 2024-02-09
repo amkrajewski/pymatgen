@@ -102,6 +102,7 @@ pymatgen.core.structure module
 
 .. automodule:: pymatgen.core.structure
    :members:
+   :special-members: __setitem__
    :undoc-members:
    :show-inheritance:
 
