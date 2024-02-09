@@ -513,28 +513,31 @@ class PeriodicSite(Site, MSONable):
                 the image that is nearest to the site is found.
 
         Returns:
-            (distance, jimage): Tuple of the distance and periodic lattice translations
+            (float, np.ndarray): Tuple of the distance and periodic lattice translations
             of the other site for which the distance applies.
         """
         return self.lattice.get_distance_and_image(self.frac_coords, fcoords, jimage=jimage)
 
-    def distance_and_image(self, other: PeriodicSite, jimage: ArrayLike | None = None) -> tuple[float, np.ndarray]:
-        """Gets distance and instance between two sites assuming periodic boundary
-        conditions. If the index jimage of two sites atom j is not specified it
-        selects the j image nearest to the i atom and returns the distance and
-        jimage indices in terms of lattice vector translations. If the index
-        jimage of atom j is specified it returns the distance between the ith
-        atom and the specified jimage atom, the given jimage is also returned.
+    def distance_and_image(
+            self,
+            other: PeriodicSite,
+            jimage: ArrayLike | None = None
+    ) -> tuple[float, np.ndarray]:
+        """Gets distance and instance between two sites assuming periodic boundary conditions.
+        If the index ``jimage`` of two sites atom ``j`` is not specified, it selects the ``j``
+        image nearest to the ``i`` atom and returns the distance and ``jimage`` indices in terms
+        of lattice vector translations. If the index ``jimage`` of atom ``j`` is specified it
+        returns the distance between the ``i``th atom and the specified ``jimage`` atom, the given
+        ``jimage`` is also returned.
 
         Args:
-            other (PeriodicSite): Other site to get distance from.
-            jimage (3x1 array): Specific periodic image in terms of lattice
-                translations, e.g., [1,0,0] implies to take periodic image
-                that is one a-lattice vector away. If jimage is None,
-                the image that is nearest to the site is found.
+            other (PeriodicSite): The other site to get distance from.
+            jimage (3x1 ArrayLike): Specific periodic image in terms of lattice translations, e.g.,
+                [1,0,0] implies to take periodic image that is one a-lattice vector away. If ``jimage``
+                is None, the image that is nearest to the site is found.
 
         Returns:
-            (distance, jimage): distance and periodic lattice translations
+            (float, np.ndarray): Tuple of distance float and Numpy ndarray periodic lattice translations
             of the other site for which the distance applies.
         """
         return self.distance_and_image_from_frac_coords(other.frac_coords, jimage)
@@ -543,10 +546,10 @@ class PeriodicSite(Site, MSONable):
         """Get distance between two sites assuming periodic boundary conditions.
 
         Args:
-            other (PeriodicSite): Other site to get distance from.
+            other (PeriodicSite): The other site to get distance from.
             jimage (3x1 array): Specific periodic image in terms of lattice
                 translations, e.g., [1,0,0] implies to take periodic image
-                that is one a-lattice vector away. If jimage is None,
+                that is one a-lattice vector away. If ``jimage`` is None,
                 the image that is nearest to the site is found.
 
         Returns:
@@ -570,7 +573,8 @@ class PeriodicSite(Site, MSONable):
 
         Args:
             verbosity (int): Verbosity level. Default of 0 only includes the matrix
-                representation. Set to 1 for more details such as Cartesian coordinates, etc.
+                representation. Set to 1 for more details such as Cartesian coordinates, etc. Higher
+                values are not yet implemented.
         """
         species_list = []
         for spec, occu in self._species.items():
@@ -597,14 +601,17 @@ class PeriodicSite(Site, MSONable):
         return dct
 
     @classmethod
-    def from_dict(cls, dct, lattice=None) -> PeriodicSite:
+    def from_dict(
+            cls,
+            dct: dict,
+            lattice: Lattice = None
+    ) -> PeriodicSite:
         """Create PeriodicSite from dict representation.
 
         Args:
             dct (dict): dict representation of PeriodicSite
-            lattice: Optional lattice to override lattice specified in d.
-                Useful for ensuring all sites in a structure share the same
-                lattice.
+            lattice (Lattice): Optional lattice to override lattice specified in d.
+                Useful for ensuring all sites in a structure share the same lattice.
 
         Returns:
             PeriodicSite
