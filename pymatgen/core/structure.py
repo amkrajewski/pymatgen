@@ -3579,7 +3579,8 @@ class IMolecule(SiteCollection, MSONable):
 
         if fmt == "xyz" or fnmatch(filename.lower(), "*.xyz*"):
             writer = XYZ(self)
-        elif any(fmt == ext or fnmatch(filename.lower(), f"*.{ext}*") for ext in ["gjf", "g03", "g09", "com", "inp"]):
+        elif any(fmt == ext or fnmatch(filename.lower(), f"*.{ext}*")
+                 for ext in ["gjf", "g03", "g09", "com", "inp"]):
             writer = GaussianInput(self)
         elif fmt == "json" or fnmatch(filename, "*.json*") or fnmatch(filename, "*.mson*"):
             json_str = json.dumps(self.as_dict())
@@ -3609,20 +3610,21 @@ class IMolecule(SiteCollection, MSONable):
 
     @classmethod
     def from_str(  # type: ignore[override]
-        cls, input_string: str, fmt: Literal["xyz", "gjf", "g03", "g09", "com", "inp", "json", "yaml"]
+        cls,
+        input_string: str,
+        fmt: Literal["xyz", "gjf", "g03", "g09", "com", "inp", "json", "yaml"] = "JSON"
     ) -> IMolecule | Molecule:
-        """Reads the molecule from a string.
+        """Reads the Molecule from a string.
 
         Args:
+            cls: Molecule class to instantiate.
             input_string (str): String to parse.
-            fmt (str): Format to output to. Defaults to JSON unless filename
-                is provided. If fmt is specifies, it overrides whatever the
-                filename is. Options include "xyz", "gjf", "g03", "json". If
-                you have OpenBabel installed, any of the formats supported by
-                OpenBabel. Non-case sensitive.
+            fmt (str): Format to output to. Defaults to JSON. Options include "xyz", "gjf", "g03", "json". If
+                you have OpenBabel installed, any of the formats supported by OpenBabel can be used. If the format is
+                not recognized, OpenBabel will be used to try to convert the molecule. Not case-sensitive.
 
         Returns:
-            IMolecule or Molecule.
+            `IMolecule` or `Molecule` depending on the class method is called on.
         """
         from pymatgen.io.gaussian import GaussianInput
         from pymatgen.io.xyz import XYZ
@@ -3641,23 +3643,25 @@ class IMolecule(SiteCollection, MSONable):
             return cls.from_dict(dct)
         else:
             from pymatgen.io.babel import BabelMolAdaptor
-
             mol = BabelMolAdaptor.from_str(input_string, file_format=fmt).pymatgen_mol
-        return cls.from_sites(mol, properties=mol.properties)
+            return cls.from_sites(mol, properties=mol.properties)
 
     @classmethod
-    def from_file(cls, filename):
-        """Reads a molecule from a file. Supported formats include xyz,
-        gaussian input (gjf|g03|g09|com|inp), Gaussian output (.out|and
-        pymatgen's JSON-serialized molecules. Using openbabel,
-        many more extensions are supported but requires openbabel to be
-        installed.
+    def from_file(cls, filename: str | Path, fmt: str = "") -> IMolecule | Molecule:
+        """Reads a molecule from a file. Supported formats include xyz, gaussian input (gjf|g03|g09|com|inp),
+        Gaussian output, and pymatgen's JSON-serialized molecules. Using openbabel, many more extensions are
+        supported, but it requires openbabel to be installed.
 
         Args:
-            filename (str | Path): The filename to read from.
+            cls: Molecule class to instantiate.
+            filename (str | Path): The filename to read from. The format is determined from the filename
+                if fmt is not specified.
+            fmt (str): Format to output to. Defaults to an empty string, in which case the format is inferred
+                from the filename. Options include "xyz", "gjf", "g03", "g09", "com", "inp", "json". If you have
+
 
         Returns:
-            Molecule
+            `IMolecule` or `Molecule` depending on the class method is called on.
         """
         filename = str(filename)
         from pymatgen.io.gaussian import GaussianOutput
@@ -3665,15 +3669,16 @@ class IMolecule(SiteCollection, MSONable):
         with zopen(filename) as file:
             contents = file.read()
         fname = filename.lower()
-        if fnmatch(fname, "*.xyz*"):
+        if fmt == "xyz" or fnmatch(filename.lower(), "*.xyz*"):
             return cls.from_str(contents, fmt="xyz")
-        if any(fnmatch(fname.lower(), f"*.{r}*") for r in ["gjf", "g03", "g09", "com", "inp"]):
+        elif any(fmt == ext or fnmatch(filename.lower(), f"*.{ext}*")
+                 for ext in ["gjf", "g03", "g09", "com", "inp"]):
             return cls.from_str(contents, fmt="g09")
-        if any(fnmatch(fname.lower(), f"*.{r}*") for r in ["out", "lis", "log"]):
+        elif any(fmt == ext or fnmatch(fname.lower(), f"*.{ext}*") for ext in ["out", "lis", "log"]):
             return GaussianOutput(filename).final_structure
-        if fnmatch(fname, "*.json*") or fnmatch(fname, "*.mson*"):
+        elif fmt == "json" or fnmatch(filename, "*.json*") or fnmatch(filename, "*.mson*"):
             return cls.from_str(contents, fmt="json")
-        if fnmatch(fname, "*.yaml*") or fnmatch(filename, "*.yml*"):
+        elif fmt in ("yaml", "yml") or fnmatch(filename, "*.yaml*") or fnmatch(filename, "*.yml*"):
             return cls.from_str(contents, fmt="yaml")
         from pymatgen.io.babel import BabelMolAdaptor
 
