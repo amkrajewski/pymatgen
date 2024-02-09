@@ -1541,9 +1541,9 @@ class IStructure(SiteCollection, MSONable):
     ) -> tuple[np.ndarray, ...]:
         """A python version of getting neighbor_list. The returned values are a tuple of
         numpy arrays (center_indices, points_indices, offset_vectors, distances).
-        Atom `center_indices[i]` has neighbor atom `points_indices[i]` that is
-        translated by `offset_vectors[i]` lattice vectors, and the distance is
-        `distances[i]`.
+        Atom ``center_indices[i]`` has neighbor atom ``points_indices[i]`` that is
+        translated by ``offset_vectors[i]`` lattice vectors, and the distance is
+        ``distances[i]``.
 
         Args:
             r (float): Radius of sphere
@@ -1589,13 +1589,13 @@ class IStructure(SiteCollection, MSONable):
     ) -> tuple[np.ndarray, ...]:
         """Get neighbor lists using numpy array representations without constructing
         Neighbor objects. If the cython extension is installed, this method will
-        be orders of magnitude faster than `get_all_neighbors_old` and 2-3x faster
-        than `get_all_neighbors`.
+        be orders of magnitude faster than ``get_all_neighbors_old`` and 2-3x faster
+        than ``get_all_neighbors``.
         The returned values are a tuple of numpy arrays
         (center_indices, points_indices, offset_vectors, distances).
-        Atom `center_indices[i]` has neighbor atom `points_indices[i]` that is
-        translated by `offset_vectors[i]` lattice vectors, and the distance is
-        `distances[i]`.
+        Atom ``center_indices[i]`` has neighbor atom ``points_indices[i]`` that is
+        translated by ``offset_vectors[i]`` lattice vectors, and the distance is
+        ``distances[i]``.
 
         Args:
             r (float): Radius of sphere
@@ -1650,8 +1650,8 @@ class IStructure(SiteCollection, MSONable):
         """Similar to 'get_neighbor_list' with sites=None, but the neighbors are
         grouped by symmetry. The returned values are a tuple of numpy arrays
         (center_indices, points_indices, offset_vectors, distances, symmetry_indices).
-        Atom `center_indices[i]` has neighbor atom `points_indices[i]` that is translated
-        by `offset_vectors[i]` lattice vectors, and the distance is `distances[i]`.
+        Atom ``center_indices[i]`` has neighbor atom ``points_indices[i]`` that is translated
+        by ``offset_vectors[i]`` lattice vectors, and the distance is ``distances[i]``.
         Symmetry_idx groups the bonds that are related by a symmetry of the provided space
         group and symmetry_op is the operation that relates the first bond of the same
         symmetry_idx to the respective atom. The first bond maps onto itself via the
@@ -3036,15 +3036,15 @@ class IMolecule(SiteCollection, MSONable):
                 automatically set to 1 if the molecule has no unpaired
                 electrons and to 2 if there are unpaired electrons.
             validate_proximity (bool): Whether to check if there are sites
-                that are less than `self.DISTANCE_TOLERANCE` Angstrom apart,
+                that are less than ``self.DISTANCE_TOLERANCE`` Angstrom apart,
                 or 0.5 Angstrom by default. Not run (False) by default.
             site_properties (dict): Properties associated with the sites as
                 a dict of sequences, e.g., {"magmom":[5,5,5,5]}. The
-                sequences have to be the same length as the atomic `species`
-                and `fractional_coords`. Defaults to None for no properties.
+                sequences have to be the same length as the atomic ``species``
+                and ``fractional_coords``. Defaults to None for no properties.
             labels (list[str]): Labels associated with the sites as a
                 list of strings, e.g. ['Li1', 'Li2']. Must have the same
-                length as the `species` and `fractional_coords`. Defaults to
+                length as the ``species`` and ``fractional_coords``. Defaults to
                 None for no labels.
             charge_spin_check (bool): Whether to check that the charge and
                 spin multiplicity are compatible with each other. Defaults
@@ -3122,7 +3122,7 @@ class IMolecule(SiteCollection, MSONable):
         """Convenience method to get a copy of the molecule.
 
         Returns:
-            `IMolecule` or `Molecule`
+            ``IMolecule`` or ``Molecule``
         """
         return type(self).from_sites(self, properties=self.properties)
 
@@ -3223,7 +3223,7 @@ class IMolecule(SiteCollection, MSONable):
                 CovalentBond.is_bonded.
 
         Returns:
-            List of `CovalentBond`s
+            List of ``CovalentBond``s
         """
         bonds = []
         for site1, site2 in itertools.combinations(self._sites, 2):
@@ -3318,7 +3318,7 @@ class IMolecule(SiteCollection, MSONable):
         """JSON-serializable dict representation of Molecule.
 
         Returns:
-            Dict which can be JSON serialized or used to recreate the Molecule using `from_dict`.
+            Dict which can be JSON serialized or used to recreate the Molecule using ``from_dict``.
         """
         dct = {
             "@module": type(self).__module__,
@@ -3337,7 +3337,7 @@ class IMolecule(SiteCollection, MSONable):
 
     @classmethod
     def from_dict(cls, dct: dict) -> IMolecule | Molecule:
-        """Reconstitute a Molecule object from a dict representation created using `as_dict`.
+        """Reconstitute a Molecule object from a dict representation created using ``as_dict``.
 
         Args:
             dct (dict): dict representation of Molecule.
@@ -3371,7 +3371,7 @@ class IMolecule(SiteCollection, MSONable):
             r (float): Radius of the sphere.
 
         Returns:
-            A list of `Neighbor`s.
+            A list of ``Neighbor``s.
         """
 
         assert len(pt) == 3, "pt must be a 3x1 ArrayLike of cartesian coordinates."
@@ -3383,30 +3383,30 @@ class IMolecule(SiteCollection, MSONable):
         return neighbors
 
     def get_neighbors(self, site: Site, r: float) -> list[Neighbor]:
-        """Get all neighbors to a `Site` within a sphere of radius r. Excludes the
-        `site` itself.
+        """Get all neighbors to a ``Site`` within a sphere of radius r. Excludes the
+        site itself.
 
         Args:
             site (Site): Site being considered. Sphere is centered on it.
             r (float): Radius of sphere.
 
         Returns:
-            A list of `Neighbor`s
+            A list of ``Neighbor``s
         """
         nns = self.get_sites_in_sphere(site.coords, r)
         return [nn for nn in nns if nn != site]
 
     def get_neighbors_in_shell(self, origin: ArrayLike, r: float, dr: float) -> list[Neighbor]:
-        """Returns all sites in a shell centered around coordinates of `origin` between radii
+        """Returns all sites in a shell centered around coordinates of ``origin`` between radii
         r-dr and r+dr.
 
         Args:
             origin (3x1 ArrayLike): Cartesian coordinates of the site being considered. The shell is centered on it.
-            r (float): Radius of a sphere inside the shell, from which sites within `dr` are included in it.
+            r (float): Radius of a sphere inside the shell, from which sites within ``dr`` are included in it.
             dr (float): Half-thickness of the shell.
 
         Returns:
-            A list of `Neighbor`s
+            A list of ``Neighbor``s
         """
         outer = self.get_sites_in_sphere(origin, r + dr)
         inner = r - dr
@@ -3443,7 +3443,7 @@ class IMolecule(SiteCollection, MSONable):
                 each other. This is only used if random_rotation is True.
                 The randomized rotations are searched such that no two atoms
                 are less than min_dist from each other.
-            cls: The Structure class to instantiate. Defaults to `Structure` if the default
+            cls: The Structure class to instantiate. Defaults to ``Structure`` if the default
                 None is not overridden.
             offset: Translation to offset molecule from the center of mass coordinates.
             no_cross: Whether to forbid molecule coordinates from extending beyond
@@ -3536,7 +3536,7 @@ class IMolecule(SiteCollection, MSONable):
         """Returns a Molecule offset such that the center of mass is at the origin.
 
         Returns:
-            `Molecule` with the center of mass at origin.
+            ``Molecule`` with the center of mass at origin.
         """
         center = self.center_of_mass
         new_coords = np.array(self.cart_coords) - center
@@ -3565,7 +3565,7 @@ class IMolecule(SiteCollection, MSONable):
                 supported by OpenBabel. Not case-sensitive.
 
         Returns:
-            A string representation of molecule in given format inferred from `filename` or directly from `fmt`.
+            A string representation of molecule in given format inferred from ``filename`` or directly from ``fmt``.
         """
         from pymatgen.io.babel import BabelMolAdaptor
         from pymatgen.io.gaussian import GaussianInput
@@ -3624,7 +3624,7 @@ class IMolecule(SiteCollection, MSONable):
                 not recognized, OpenBabel will be used to try to convert the molecule. Not case-sensitive.
 
         Returns:
-            `IMolecule` or `Molecule` depending on the class method is called on.
+            ``IMolecule`` or ``Molecule`` depending on the class method is called on.
         """
         from pymatgen.io.gaussian import GaussianInput
         from pymatgen.io.xyz import XYZ
@@ -3661,7 +3661,7 @@ class IMolecule(SiteCollection, MSONable):
 
 
         Returns:
-            `IMolecule` or `Molecule` depending on the class method is called on.
+            ``IMolecule`` or ``Molecule`` depending on the class method is called on.
         """
         filename = str(filename)
         from pymatgen.io.gaussian import GaussianOutput
@@ -3730,7 +3730,7 @@ class Structure(IStructure, collections.abc.MutableSequence):
             charge (float): The overall charge of the structure. Defaults to behavior in
                 SiteCollection where total charge is the sum of the oxidation states.
             validate_proximity (bool): Whether to check if there are sites that are less than
-                `self.DISTANCE_TOLERANCE` Angstrom apart, or 0.5 Angstrom by default.
+                ``self.DISTANCE_TOLERANCE`` Angstrom apart, or 0.5 Angstrom by default.
                 Not run (False) by default.
             to_unit_cell (bool): Whether to map all sites into the unit cell, i.e., fractional
                 coords between 0 and 1. Defaults to False.
@@ -3738,9 +3738,9 @@ class Structure(IStructure, collections.abc.MutableSequence):
                 Cartesian coordinates. Defaults to False.
             site_properties (dict): Properties associated with the sites as a dict of
                 sequences, e.g., {"magmom":[5,5,5,5]}. The sequences have to be the same length
-                as the `species` and `coords`. Defaults to None for no properties.
+                as the ``species`` and ``coords``. Defaults to None for no properties.
             labels (list[str]): Labels associated with the sites as a list of strings, e.g.
-                ['Li1', 'Li2']. Must have the same length as the `species` and `coords`. Defaults to
+                ['Li1', 'Li2']. Must have the same length as the ``species`` and ``coords``. Defaults to
                 None for no labels.
             properties (dict): Dictionary of roperties associated with the whole structure. It will
                 be serialized when writing the structure to JSON or YAML but is lost when converting
@@ -3893,8 +3893,9 @@ class Structure(IStructure, collections.abc.MutableSequence):
             coords (3x1 array): Coordinates of inserted site
             coords_are_cartesian (bool): Whether coordinates are cartesian.
                 Defaults to False.
-            validate_proximity (bool): Whether to check if inserted site is too close to
-                an existing site. Controlled by self.DISTANCE_TOLERANCE. Defaults to False.
+            validate_proximity (bool): Whether to check if the inserted site is too close to
+                an existing site, i.e., ``self.DISTANCE_TOLERANCE`` Angstrom apart, or
+                0.5 Angstrom by default. Not run (False) by default.
             properties (dict): Properties associated with the site.
             label (str): Label associated with the site.
 

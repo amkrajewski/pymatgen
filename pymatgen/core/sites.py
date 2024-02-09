@@ -106,7 +106,7 @@ class Site(collections.abc.Hashable, MSONable):
 
     @property
     def x(self) -> float:
-        """Cartesian x coordinate."""
+        """Cartesian ``x`` coordinate."""
         return self.coords[0]
 
     @x.setter
@@ -115,7 +115,7 @@ class Site(collections.abc.Hashable, MSONable):
 
     @property
     def y(self) -> float:
-        """Cartesian y coordinate."""
+        """Cartesian ``y`` coordinate."""
         return self.coords[1]
 
     @y.setter
@@ -124,7 +124,7 @@ class Site(collections.abc.Hashable, MSONable):
 
     @property
     def z(self) -> float:
-        """Cartesian z coordinate."""
+        """Cartesian ``z`` coordinate."""
         return self.coords[2]
 
     @z.setter
@@ -193,7 +193,7 @@ class Site(collections.abc.Hashable, MSONable):
     def __eq__(self, other: object) -> bool:
         """A site is equal to another site if the species and occupancies are the
         same, and the coordinates are the same to some tolerance. numpy function
-        `allclose` is used to determine if coordinates are close.
+        ``allclose`` is used to determine if coordinates are close.
         """
         if not isinstance(other, type(self)):
             return NotImplemented
@@ -284,8 +284,8 @@ class Site(collections.abc.Hashable, MSONable):
 
 
 class PeriodicSite(Site, MSONable):
-    """Extension of the generic `Site` object to periodic systems.
-    `PeriodicSite` includes a lattice system.
+    """Extension of the generic ``Site`` object to periodic systems.
+    ``PeriodicSite`` includes a lattice system.
     """
 
     def __init__(
@@ -394,7 +394,7 @@ class PeriodicSite(Site, MSONable):
 
     @property
     def a(self) -> float:
-        """Fractional `a` coordinate."""
+        """Fractional ``a`` coordinate."""
         return self._frac_coords[0]
 
     @a.setter
@@ -404,7 +404,7 @@ class PeriodicSite(Site, MSONable):
 
     @property
     def b(self) -> float:
-        """Fractional `b` coordinate."""
+        """Fractional ``b`` coordinate."""
         return self._frac_coords[1]
 
     @b.setter
@@ -414,7 +414,7 @@ class PeriodicSite(Site, MSONable):
 
     @property
     def c(self) -> float:
-        """Fractional `c` coordinate."""
+        """Fractional ``c`` coordinate."""
         return self._frac_coords[2]
 
     @c.setter
@@ -424,7 +424,7 @@ class PeriodicSite(Site, MSONable):
 
     @property
     def x(self) -> float:
-        """Cartesian `x` coordinate."""
+        """Cartesian ``x`` coordinate."""
         return self.coords[0]
 
     @x.setter
@@ -434,7 +434,7 @@ class PeriodicSite(Site, MSONable):
 
     @property
     def y(self) -> float:
-        """Cartesian `y` coordinate."""
+        """Cartesian ``y`` coordinate."""
         return self.coords[1]
 
     @y.setter
@@ -444,7 +444,7 @@ class PeriodicSite(Site, MSONable):
 
     @property
     def z(self) -> float:
-        """Cartesian `z` coordinate."""
+        """Cartesian ``z`` coordinate."""
         return self.coords[2]
 
     @z.setter
@@ -453,7 +453,7 @@ class PeriodicSite(Site, MSONable):
         self._frac_coords = self._lattice.get_fractional_coords(self.coords)
 
     def to_unit_cell(self, in_place=False) -> PeriodicSite | None:
-        """Move `frac_coords` to within the unit cell."""
+        """Move ``frac_coords`` to within the unit cell."""
         frac_coords = [np.mod(f, 1) if p else f for p, f in zip(self.lattice.pbc, self.frac_coords)]
         if in_place:
             self.frac_coords = np.array(frac_coords)
@@ -501,10 +501,10 @@ class PeriodicSite(Site, MSONable):
         jimage: ArrayLike | None = None
     ) -> tuple[float, np.ndarray]:
         """Gets the distance between site and a fractional coordinate assuming periodic boundary
-        conditions. If the index `jimage` of two sites atom `j` is not specified, it selects the `j` image
-        nearest to the `i` atom and returns the distance and `jimage` indices in terms of lattice vector
-        translations. If the index `jimage` of atom `j` is specified, it returns the distance between the
-        `i` atom and the specified `jimage` atom, the given `jimage` is also returned.
+        conditions. If the index ``jimage`` of two sites atom ``j`` is not specified, it selects the ``j`` image
+        nearest to the ``i`` atom and returns the distance and ``jimage`` indices in terms of lattice vector
+        translations. If the index ``jimage`` of atom ``j`` is specified, it returns the distance between the
+        ``i`` atom and the specified ``jimage`` atom, the given ``jimage`` is also returned.
 
         Args:
             fcoords (3x1 array): Fractional coordinates to get the distance from.
