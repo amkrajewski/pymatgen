@@ -2059,6 +2059,12 @@ Site: H (-0.5134, 0.8892, -0.3630)"""
         ch4_mol.properties = self.mol.properties
         assert self.mol == ch4_mol
         ch4_yaml_str = self.mol.to(filename=f"{self.tmp_path}/CH4_testing.yaml")
+        # Problematic case (not a YAML)
+        # ch4_yaml_str_2 = self.mol.to(filename=f"{self.tmp_path}/CH4_testing.xyz.yaml")
+        # Test correctness of explicit format override for such cases:
+        ch4_yaml_str_2 = self.mol.to(filename=f"{self.tmp_path}/CH4_testing.xyz.yaml", fmt="yaml")
+        assert ch4_yaml_str == ch4_yaml_str_2, \
+            "yaml inferred from filename should produce same result as if format is explicitly set"
 
         with open("CH4_testing.yaml") as yaml_file:
             assert yaml_file.read() == ch4_yaml_str
